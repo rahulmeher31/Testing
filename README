@@ -1,0 +1,39 @@
+Examination for job prospects: finding bugs
+
+Included is a buggy client / server program.  The server maintains a
+set of integer-valued slots that the clients can read and write.  The
+objective of the server is to allow many concurrent clients to
+simultaneously query and update the slots.  It provides no consistency
+guarantees between commands (e.g. 'SET a 5' then 'GET a' might return
+a non-5 value if another client SET it in between), but the state
+should always be equivalent to running the commands sequentially in
+some order.  Slots names are case sensitive and values are 32 bit
+integers.  Commands are case-insensitive.
+
+Start server:
+java -jar server.jar <name>
+Example: java -jar server.jar test
+
+Client has two modes, interactive and non-interactive:
+java -jar client.jar <name> [optional command] [optional command] [...]
+Example (interactive): java -jar client.jar test
+Example (non-interactive): java -jar client.jar test "create a" "set a 5" "get a"
+
+Notes:
+
+Server drops log in current directory under <name>.log.
+Log is also echoed to standard out.
+
+Communication is via a simple TCP protocol (you can use telnet in
+place of client for investigative purposes).
+
+Commands:
+
+CREATE <slot>      - create slot with given name and value 0
+DROP <slot>        - remove slot with given name
+LIST               - list slot names in any order
+GET <slot>         - return value of slot
+SET <slot> <value> - set value of slot
+INCREMENT <slot>   - slot = slot + 1
+SHUTDOWN           - disconnect client, stop server, write state
+EXIT               - disconnect client
